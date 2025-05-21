@@ -5,11 +5,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.mynotes.navigation.Screen.Auth
 import com.example.mynotes.navigation.Screen.Home
 import com.example.mynotes.navigation.Screen.Detail
 import com.example.mynotes.navigation.Screen.Settings
-import com.example.mynotes.ui.auth.AuthScreen
+import com.example.mynotes.ui.auth.LoginScreen
+import com.example.mynotes.ui.auth.RegisterScreen
 import com.example.mynotes.ui.home.HomeScreen
 import com.example.mynotes.ui.detail.DetailScreen
 import com.example.mynotes.ui.settings.SettingsScreen
@@ -25,9 +25,6 @@ fun NavigationGraph(
         navController = navController,
         startDestination = startDestination,
     ) {
-        composable<Auth> {
-           AuthScreen(navController)
-        }
         composable<Home> {
            HomeScreen(navController)
         }
@@ -36,6 +33,12 @@ fun NavigationGraph(
         }
         composable<Settings> {
            SettingsScreen(navController)
+        }
+        composable<Screen.Register> {
+            RegisterScreen(navController)
+        }
+        composable<Screen.Login>{
+            LoginScreen(navController)
         }
     }
 }

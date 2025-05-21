@@ -10,7 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.mynotes.navigation.NavigationGraph
-import com.example.mynotes.navigation.Screen.Auth
+import com.example.mynotes.navigation.Screen
 import com.example.mynotes.ui.theme.MyappTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
             MyappTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val navController = rememberNavController()
-                    val startDestination = Auth
+                    val startDestination = Screen.Login
                     NavigationGraph(
                         navController = navController,
                         startDestination = startDestination,
