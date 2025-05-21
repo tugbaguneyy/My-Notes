@@ -1,4 +1,4 @@
-package com.example.mynotes.ui.settings
+package com.example.mynotes.presentation.settings
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController

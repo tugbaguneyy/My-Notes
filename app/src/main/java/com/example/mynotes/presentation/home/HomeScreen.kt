@@ -1,4 +1,4 @@
-package com.example.mynotes.ui.home
+package com.example.mynotes.presentation.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

@@ -1,4 +1,4 @@
-package com.example.mynotes.ui.auth
+package com.example.mynotes.presentation.auth
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

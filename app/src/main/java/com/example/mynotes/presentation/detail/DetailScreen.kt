@@ -1,4 +1,4 @@
-package com.example.mynotes.ui.detail
+package com.example.mynotes.presentation.detail
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
