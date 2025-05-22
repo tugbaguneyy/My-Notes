@@ -45,19 +45,21 @@ class HomeViewModel @Inject constructor(
 
             db.getReference(REFS_NOTES).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-
                     val notes = mutableListOf<Note>()
 
                     for (data in snapshot.children) {
-
                         val note = data.getValue(Note::class.java)
 
-                        if (note != null && note.userId == userId) {
-                            notes.add(note)
+                        // userId kontrolü ve isDeleted false kontrolü
+                        if (note != null &&
+                            note.userId == userId && !note.isDeleted
+                        ) {
+                            // Firebase'den gelen note'a id'yi manuel set et
+                            val noteWithId = note.copy(id = data.key)
+                            notes.add(noteWithId)
                         }
                     }
                     _notes.value = notes
-
                 }
 
                 override fun onCancelled(error: DatabaseError) {
