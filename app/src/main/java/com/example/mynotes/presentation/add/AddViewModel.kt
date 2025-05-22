@@ -25,7 +25,7 @@ class AddViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             val userId = currentUserUseCase().first()?.uid ?: return@launch
-            val ref = db.reference.child(Constants.REFS_EXPENSES).push()
+            val ref = db.reference.child(Constants.REFS_NOTES).push()
             val id = ref.key ?: return@launch
 
             val note = Note(
