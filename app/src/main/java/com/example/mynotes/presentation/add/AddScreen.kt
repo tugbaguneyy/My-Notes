@@ -65,16 +65,10 @@ fun AddScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    text = "Title",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = title,
                     onValueChange = { title = it },
+                    label = { Text("Title") },
                     modifier = Modifier
                         .fillMaxSize(),
                     textStyle = MaterialTheme.typography.bodyLarge,
@@ -98,7 +92,7 @@ fun AddScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(3f)
-                .padding(bottom = 16.dp),
+                .padding(bottom = 8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             )
@@ -109,16 +103,10 @@ fun AddScreen(navController: NavController) {
                     .padding(16.dp),
                 verticalArrangement = Arrangement.Top
             ) {
-                Text(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    text = "Description",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = description,
                     onValueChange = { description = it },
+                    label = { Text("Description") },
                     modifier = Modifier
                         .fillMaxSize(),
                     textStyle = MaterialTheme.typography.bodyLarge,
@@ -138,38 +126,19 @@ fun AddScreen(navController: NavController) {
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+        OutlinedButton(
+            onClick = {
+                viewModel.addNote(
+                    title = title,
+                    description = description,
+                    date = Date()
+                )
+                navController.navigateUp()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(50)
         ) {
-            OutlinedButton(
-                onClick = {
-                    navController.navigateUp()
-                },
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(50)
-            ) {
-                Text("Cancel", fontSize = 18.sp)
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            OutlinedButton(
-                onClick = {
-                    viewModel.addNote(
-                        title = title,
-                        description = description,
-                        date = Date()
-                    )
-                    navController.navigateUp()
-                },
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(50)
-            ) {
-                Text("Save", fontSize = 18.sp)
-            }
+            Text("Save", fontSize = 18.sp)
         }
     }
 }
