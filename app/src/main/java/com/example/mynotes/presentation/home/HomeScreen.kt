@@ -52,7 +52,7 @@ fun HomeScreen(navController: NavController) {
                         // TODO: Note detay sayfasına navigate
                     },
                     onFavoriteClick = { selectedNote, isFavorite ->
-                        // TODO: Favorite durumunu güncelle
+                        viewModel.toggleFavorite(selectedNote, isFavorite)
                     }
                 )
             }

@@ -81,4 +81,29 @@ class HomeViewModel @Inject constructor(
             _isAuthenticated.value = isActive
         }
     }
+
+    // Favorite işlemi için yeni fonksiyon
+    fun toggleFavorite(note: Note, isFavorite: Boolean) {
+        viewModelScope.launch {
+            try {
+                val userId = currentUserUseCase().first()?.uid ?: return@launch
+
+                // Note'un id'si varsa Firebase'de güncelle
+                note.id?.let { noteId ->
+                    val noteRef = db.getReference(REFS_NOTES).child(noteId)
+
+                    // Sadece isFavorite field'ını güncelle
+                    noteRef.child("favorite").setValue(isFavorite)
+                        .addOnSuccessListener {
+                            Log.d("Firebase", "Favorite durumu güncellendi: $isFavorite")
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e("Firebase", "Favorite güncelleme hatası: ${exception.message}")
+                        }
+                }
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Toggle favorite error: ${e.message}")
+            }
+        }
+    }
 }
