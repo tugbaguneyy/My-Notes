@@ -29,8 +29,9 @@ fun NavigationGraph(
         composable<Home> {
            HomeScreen(navController)
         }
-        composable<Detail> {
-           DetailScreen(navController)
+        composable("${Screen.Detail}/{noteId}") { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getString("noteId") ?: ""
+            DetailScreen(navController, noteId)
         }
         composable<Settings> {
            SettingsScreen(navController)

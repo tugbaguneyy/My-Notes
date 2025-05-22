@@ -62,6 +62,7 @@ class MainActivity : ComponentActivity() {
                                 isCurrentScreen(Screen.Home::class) -> "Home Screen"
                                 isCurrentScreen(Screen.Settings::class) -> "Settings"
                                 isCurrentScreen(Screen.Add::class) -> "Add Note"
+                                isCurrentScreen(Screen.Detail::class) -> "Note Detail"
                                 else -> "Not Found"
                             }
 

@@ -49,7 +49,9 @@ fun HomeScreen(navController: NavController) {
                 NoteCard(
                     note = note,
                     onNoteClick = { selectedNote ->
-                        // TODO: Note detay sayfasına navigate
+                        selectedNote.id?.let { noteId ->
+                            navController.navigate("${Screen.Detail}/$noteId")
+                        }
                     },
                     onFavoriteClick = { selectedNote, isFavorite ->
                         viewModel.toggleFavorite(selectedNote, isFavorite)
