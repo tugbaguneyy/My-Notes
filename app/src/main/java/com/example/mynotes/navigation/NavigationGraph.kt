@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.mynotes.navigation.Screen.Home
 import com.example.mynotes.navigation.Screen.Detail
 import com.example.mynotes.navigation.Screen.Settings
+import com.example.mynotes.presentation.add.AddScreen
 import com.example.mynotes.presentation.auth.LoginScreen
 import com.example.mynotes.presentation.auth.RegisterScreen
 import com.example.mynotes.presentation.home.HomeScreen
@@ -39,6 +40,9 @@ fun NavigationGraph(
         }
         composable<Screen.Login>{
             LoginScreen(navController)
+        }
+        composable<Screen.Add>{
+            AddScreen(navController)
         }
     }
 }

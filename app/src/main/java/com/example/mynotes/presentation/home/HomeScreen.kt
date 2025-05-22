@@ -1,6 +1,7 @@
 package com.example.mynotes.presentation.home
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -26,7 +27,7 @@ fun HomeScreen(navController: NavController
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Column (modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = "Home", fontSize = 24.sp)
         Button(
             onClick = {
@@ -34,6 +35,13 @@ fun HomeScreen(navController: NavController
             }
         ) {
             Text(text = "Sign Out")
+        }
+        Button(
+            onClick = {
+                navController.navigate(Screen.Add)
+            }
+        ) {
+            Text(text = "Add")
         }
     }
 }
