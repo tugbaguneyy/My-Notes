@@ -95,4 +95,28 @@ class DetailViewModel @Inject constructor(
             }
         }
     }
+
+    fun toggleFavorite(note: Note, isFavorite: Boolean) {
+        viewModelScope.launch {
+            try {
+                val userId = currentUserUseCase().first()?.uid ?: return@launch
+
+                note.id?.let { noteId ->
+                    val noteRef = db.getReference(REFS_NOTES).child(noteId)
+
+                    noteRef.child("favorite").setValue(isFavorite)
+                        .addOnSuccessListener {
+                            Log.d("Firebase", "Favorite durumu güncellendi: $isFavorite")
+                            // Local state'i de güncelle
+                            _note.value = _note.value?.copy(isFavorite = isFavorite)
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e("Firebase", "Favorite güncelleme hatası: ${exception.message}")
+                        }
+                }
+            } catch (e: Exception) {
+                Log.e("DetailViewModel", "Toggle favorite error: ${e.message}")
+            }
+        }
+    }
 }

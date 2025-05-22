@@ -5,17 +5,13 @@ import androidx.navigation.NavController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -30,16 +26,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import java.util.Date
+import com.example.mynotes.presentation.detail.components.TopRow
 
 
 @Composable
 fun DetailScreen(
     navController: NavController,
-    noteId: String
+    noteId: String // Navigation argument olarak note id'sini alıyoruz
 ) {
     val viewModel = hiltViewModel<DetailViewModel>()
 
@@ -69,6 +64,31 @@ fun DetailScreen(
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
+        // Top Bar
+        TopRow (
+            note = note,
+            onFavoriteClick = { isFavorite ->
+                note?.let {
+                    viewModel.toggleFavorite(it, isFavorite)
+                }
+            },
+            onUpdateClick = {
+                note?.let {
+                    viewModel.updateNote(
+                        noteId = it.id ?: "",
+                        title = title,
+                        description = description
+                    )
+                }
+                navController.navigateUp()
+            },
+            onDeleteClick = {
+                note?.let {
+                    viewModel.deleteNote(it.id ?: "")
+                }
+                navController.navigateUp()
+            }
+        )
         // Başlık Kartı
         Card(
             modifier = Modifier
@@ -111,8 +131,7 @@ fun DetailScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(3f)
-                .padding(bottom = 16.dp),
+                .weight(3f),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             )
@@ -142,49 +161,6 @@ fun DetailScreen(
                         unfocusedIndicatorColor = Color.Transparent
                     )
                 )
-            }
-        }
-
-        // Butonlar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // Update butonu
-            OutlinedButton(
-                onClick = {
-                    note?.let {
-                        viewModel.updateNote(
-                            noteId = it.id ?: "",
-                            title = title,
-                            description = description
-                        )
-                    }
-                    navController.navigateUp()
-                },
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(50)
-            ) {
-                Text("Update", fontSize = 18.sp)
-            }
-
-            // Delete butonu
-            OutlinedButton(
-                onClick = {
-                    note?.let {
-                        viewModel.deleteNote(it.id ?: "")
-                    }
-                    navController.navigateUp()
-                },
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error
-                )
-            ) {
-                Text("Delete", fontSize = 18.sp)
             }
         }
     }
