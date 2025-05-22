@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -66,8 +67,6 @@ class MainActivity : ComponentActivity() {
                                 else -> "Not Found"
                             }
 
-                            var expanded by remember { mutableStateOf(false) }
-
                             CenterAlignedTopAppBar(
                                 title = {
                                     Text(title)
@@ -89,23 +88,10 @@ class MainActivity : ComponentActivity() {
                                 actions = {
                                     if (isCurrentScreen(Screen.Home::class)) {
                                         Box {
-                                            IconButton(onClick = { expanded = true }) {
+                                            IconButton(onClick = { navController.navigate(Screen.Settings) }) {
                                                 Icon(
-                                                    imageVector = Icons.Default.MoreVert,
+                                                    imageVector = Icons.Default.Settings,
                                                     contentDescription = "Menu"
-                                                )
-                                            }
-
-                                            DropdownMenu(
-                                                expanded = expanded,
-                                                onDismissRequest = { expanded = false }
-                                            ) {
-                                                DropdownMenuItem(
-                                                    text = { Text("Profile") },
-                                                    onClick = {
-                                                        expanded = false
-                                                        navController.navigate(Screen.Settings)
-                                                    }
                                                 )
                                             }
                                         }

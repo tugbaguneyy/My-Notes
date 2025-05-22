@@ -12,9 +12,12 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,6 +37,7 @@ fun TopRow(
     onDeleteClick: () -> Unit
 ) {
     var isFavorite by remember { mutableStateOf(note?.isFavorite ?: false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     // Note değiştiğinde isFavorite'ı güncelle
     LaunchedEffect(note?.isFavorite) {
@@ -61,7 +65,7 @@ fun TopRow(
                 } else {
                     Icons.Outlined.FavoriteBorder
                 },
-                contentDescription = if (isFavorite) "Favorilerden çıkar" else "Favorilere ekle",
+                contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
                 tint = if (isFavorite) {
                     MaterialTheme.colorScheme.primary
                 } else {
@@ -81,23 +85,44 @@ fun TopRow(
             ) {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = "Not güncelle",
+                    contentDescription = "Update note",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
             }
 
-            // Delete butonu
+            // Delete butonu -> Alert dialog açar
             IconButton(
-                onClick = onDeleteClick
+                onClick = { showDeleteDialog = true }
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Not sil",
+                    contentDescription = "Delete note",
                     tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(24.dp)
                 )
             }
         }
+    }
+    // AlertDialog
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Move to Recycle Bin") },
+            text = { Text("Do you want to move this note to the recycle bin?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDeleteDialog = false
+                    onDeleteClick()
+                }) {
+                    Text("Confirm")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }

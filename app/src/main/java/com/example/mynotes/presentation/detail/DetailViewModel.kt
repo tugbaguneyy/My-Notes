@@ -119,4 +119,28 @@ class DetailViewModel @Inject constructor(
             }
         }
     }
+
+    fun softDeleteNote(note: Note, isDeleted: Boolean) {
+        viewModelScope.launch {
+            try {
+                val userId = currentUserUseCase().first()?.uid ?: return@launch
+
+                note.id?.let { noteId ->
+                    val noteRef = db.getReference(REFS_NOTES).child(noteId)
+
+                    noteRef.child("deleted").setValue(isDeleted)
+                        .addOnSuccessListener {
+                            Log.d("Firebase", "isDeleted durumu güncellendi: $isDeleted")
+                            // Local state'i de güncelle
+                            _note.value = _note.value?.copy(isFavorite = isDeleted)
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e("Firebase", "Soft delete güncelleme hatası: ${exception.message}")
+                        }
+                }
+            } catch (e: Exception) {
+                Log.e("DetailViewModel", "Soft delete error: ${e.message}")
+            }
+        }
+    }
 }
