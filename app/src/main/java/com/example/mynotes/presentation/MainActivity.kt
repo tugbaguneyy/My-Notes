@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         if (!isAuthScreen) {
                             val title = when {
-                                isCurrentScreen(Screen.Home::class) -> "Home Screen"
+                                isCurrentScreen(Screen.Home::class) -> "My Notes 📝"
                                 isCurrentScreen(Screen.Settings::class) -> "Settings"
                                 isCurrentScreen(Screen.Add::class) -> "Add Note"
                                 isCurrentScreen(Screen.Detail::class) -> "Note Detail"
