@@ -6,6 +6,7 @@ import com.example.mynotes.domain.usecase.ClearAllTrashUseCase
 import com.example.mynotes.domain.usecase.CurrentUserUseCase
 import com.example.mynotes.domain.usecase.GetAllNotesUseCase
 import com.example.mynotes.domain.usecase.GetDeletedNotesUseCase
+import com.example.mynotes.domain.usecase.LoadNoteUseCase
 import com.example.mynotes.domain.usecase.PermanentlyDeleteNoteUseCase
 import com.example.mynotes.domain.usecase.RestoreNoteUseCase
 import com.example.mynotes.domain.usecase.SignInWithEmailAndPasswordUseCase
@@ -68,6 +69,12 @@ object UseCaseModule {
 
     @Singleton
     @Provides
+    fun provideLoadNoteUseCase(db: FirebaseDatabase, currentUserUseCase: CurrentUserUseCase) : LoadNoteUseCase {
+        return LoadNoteUseCase(db, currentUserUseCase)
+    }
+
+    @Singleton
+    @Provides
     fun provideToggleFavoriteUseCase(db: FirebaseDatabase, currentUserUseCase: CurrentUserUseCase) : ToggleFavoriteUseCase {
         return ToggleFavoriteUseCase(db, currentUserUseCase)
     }
@@ -95,7 +102,6 @@ object UseCaseModule {
     fun provideClearAllTrashUseCase(db: FirebaseDatabase) : ClearAllTrashUseCase {
         return ClearAllTrashUseCase(db)
     }
-
 
 
 }

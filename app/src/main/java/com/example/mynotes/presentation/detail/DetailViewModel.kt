@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mynotes.domain.model.Note
 import com.example.mynotes.domain.usecase.CurrentUserUseCase
+import com.example.mynotes.domain.usecase.LoadNoteUseCase
 import com.example.mynotes.domain.usecase.SoftDeleteNoteUseCase
 import com.example.mynotes.domain.usecase.ToggleFavoriteUseCase
 import com.example.mynotes.util.Constants.REFS_NOTES
@@ -25,7 +26,8 @@ class DetailViewModel @Inject constructor(
     private val db: FirebaseDatabase,
     private val currentUserUseCase: CurrentUserUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-    private val softDeleteNoteUseCase: SoftDeleteNoteUseCase
+    private val softDeleteNoteUseCase: SoftDeleteNoteUseCase,
+    private val loadNoteUseCase: LoadNoteUseCase
 ) : ViewModel() {
 
     private val _note = MutableStateFlow<Note?>(null)
@@ -33,25 +35,9 @@ class DetailViewModel @Inject constructor(
 
     fun loadNote(noteId: String) {
         viewModelScope.launch {
-            try {
-                val userId = currentUserUseCase().first()?.uid ?: return@launch
-
-                db.getReference(REFS_NOTES).child(noteId)
-                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            val note = snapshot.getValue(Note::class.java)
-                            if (note != null && note.userId == userId) {
-                                // Firebase'den gelen note objesine id'yi manuel olarak set ediyoruz
-                                _note.value = note.copy(id = noteId)
-                            }
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            Log.e("Firebase", "Note yükleme hatası: ${error.message}")
-                        }
-                    })
-            } catch (e: Exception) {
-                Log.e("DetailViewModel", "Load note error: ${e.message}")
+            loadNoteUseCase(noteId).collect { result ->
+                result.onSuccess { _note.value = it }
+                    .onFailure { e -> Log.e("DetailViewModel", "Load note error: ${e.message}") }
             }
         }
     }
