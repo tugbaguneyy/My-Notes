@@ -5,6 +5,7 @@ import com.example.mynotes.domain.usecase.AddNoteUseCase
 import com.example.mynotes.domain.usecase.CurrentUserUseCase
 import com.example.mynotes.domain.usecase.GetAllNotesUseCase
 import com.example.mynotes.domain.usecase.GetDeletedNotesUseCase
+import com.example.mynotes.domain.usecase.PermanentlyDeleteNoteUseCase
 import com.example.mynotes.domain.usecase.RestoreNoteUseCase
 import com.example.mynotes.domain.usecase.SignInWithEmailAndPasswordUseCase
 import com.example.mynotes.domain.usecase.SignOutUseCase
@@ -80,6 +81,12 @@ object UseCaseModule {
     @Provides
     fun provideRestoreNoteUseCase(db: FirebaseDatabase, currentUserUseCase: CurrentUserUseCase) : RestoreNoteUseCase {
         return RestoreNoteUseCase(db, currentUserUseCase)
+    }
+
+    @Singleton
+    @Provides
+    fun providePermanentlyDeleteNoteUseCase(db: FirebaseDatabase) : PermanentlyDeleteNoteUseCase {
+        return PermanentlyDeleteNoteUseCase(db)
     }
 
 

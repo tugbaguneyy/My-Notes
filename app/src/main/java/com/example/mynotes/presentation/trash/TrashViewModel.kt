@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mynotes.domain.model.Note
-import com.example.mynotes.domain.usecase.CurrentUserUseCase
 import com.example.mynotes.domain.usecase.GetDeletedNotesUseCase
+import com.example.mynotes.domain.usecase.PermanentlyDeleteNoteUseCase
 import com.example.mynotes.domain.usecase.RestoreNoteUseCase
 import com.example.mynotes.util.Constants.REFS_NOTES
 import com.google.firebase.database.FirebaseDatabase
@@ -20,7 +20,8 @@ import javax.inject.Inject
 class TrashViewModel @Inject constructor(
     private val db: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val restoreNoteUseCase: RestoreNoteUseCase,
-    private val getDeletedNotesUseCase: GetDeletedNotesUseCase
+    private val getDeletedNotesUseCase: GetDeletedNotesUseCase,
+    private val permanentlyDeleteNoteUseCase: PermanentlyDeleteNoteUseCase
 ) : ViewModel() {
 
     private val _deletedNotes = MutableStateFlow<List<Note>>(emptyList())
@@ -54,26 +55,19 @@ class TrashViewModel @Inject constructor(
     fun permanentlyDeleteNote(noteId: String?) {
         viewModelScope.launch {
             noteId?.let { id ->
-                try {
-                    db.getReference(REFS_NOTES).child(id)
-                        .removeValue()
-                        .addOnSuccessListener {
-                            Log.d("TrashViewModel", "Note permanently deleted: $id")
-
-                            // Local state'i hemen güncelle
-                            val currentNotes = _deletedNotes.value.toMutableList()
-                            currentNotes.removeAll { it.id == id }
-                            _deletedNotes.value = currentNotes
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.e("TrashViewModel", "Permanent delete failed: ${exception.message}")
-                        }
-                } catch (e: Exception) {
-                    Log.e("Firebase", "Not kalıcı silme hatası: ${e.message}")
+                val result = permanentlyDeleteNoteUseCase(id)
+                result.onSuccess {
+                    val currentNotes = _deletedNotes.value.toMutableList()
+                    currentNotes.removeAll { note -> note.id == id }
+                    _deletedNotes.value = currentNotes
+                    Log.d("TrashViewModel", "Note permanently deleted: $id")
+                }.onFailure { e ->
+                    Log.e("TrashViewModel", "Permanent delete failed: ${e.message}")
                 }
             }
         }
     }
+
 
     fun clearAllTrash() {
         viewModelScope.launch {
