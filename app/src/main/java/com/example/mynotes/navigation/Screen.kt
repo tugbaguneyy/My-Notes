@@ -20,4 +20,8 @@ sealed interface Screen {
 
     @Serializable
     data object Add : Screen
+
+    @Serializable
+    data object Trash : Screen
+
 }

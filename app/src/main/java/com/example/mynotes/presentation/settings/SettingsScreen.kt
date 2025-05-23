@@ -88,7 +88,7 @@ fun SettingsScreen(
                     tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             },
-            onClick = {  }
+            onClick = {navController.navigate(Screen.Trash)  }
         )
 
 //        // Theme Settings

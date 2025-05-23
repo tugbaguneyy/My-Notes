@@ -14,6 +14,7 @@ import com.example.mynotes.presentation.auth.RegisterScreen
 import com.example.mynotes.presentation.home.HomeScreen
 import com.example.mynotes.presentation.detail.DetailScreen
 import com.example.mynotes.presentation.settings.SettingsScreen
+import com.example.mynotes.presentation.trash.TrashScreen
 
 @Composable
 fun NavigationGraph(
@@ -44,6 +45,9 @@ fun NavigationGraph(
         }
         composable<Screen.Add>{
             AddScreen(navController)
+        }
+        composable<Screen.Trash>{
+            TrashScreen()
         }
     }
 }

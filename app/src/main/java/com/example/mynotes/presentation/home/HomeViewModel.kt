@@ -22,7 +22,6 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val db: FirebaseDatabase,
-    private val signOutUseCase: SignOutUseCase,
     private val currentUserUseCase: CurrentUserUseCase
 ) : ViewModel() {
 
@@ -52,7 +51,8 @@ class HomeViewModel @Inject constructor(
 
                         // userId kontrolü ve isDeleted false kontrolü
                         if (note != null &&
-                            note.userId == userId && !note.isDeleted
+                            note.userId == userId &&
+                            !note.isDeleted
                         ) {
                             // Firebase'den gelen note'a id'yi manuel set et
                             val noteWithId = note.copy(id = data.key)
@@ -60,20 +60,13 @@ class HomeViewModel @Inject constructor(
                         }
                     }
                     _notes.value = notes
+                    Log.d("HomeViewModel", "Notes updated: ${notes.size} active notes found")
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                     Log.e("Firebase", "Veri çekme iptal edildi: ${error.message}")
                 }
             })
-        }
-    }
-
-
-    fun signOut(){
-        viewModelScope.launch {
-            signOutUseCase()
-            _isAuthenticated.value = false
         }
     }
 
