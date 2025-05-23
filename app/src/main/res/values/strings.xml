@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">My Notes</string>
+    <string name="home_title">My Notes 📝</string>
+    <string name="settings_title">Settings</string>
+    <string name="add_note_title">Add Note</string>
+    <string name="detail_title">Note Detail</string>
+    <string name="trash_title">Trash</string>
+    <string name="not_found_title">Not Found</string>
 </resources>

@@ -77,25 +77,6 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    fun deleteNote(noteId: String) {
-        viewModelScope.launch {
-            try {
-                val userId = currentUserUseCase().first()?.uid ?: return@launch
-
-                db.getReference(REFS_NOTES).child(noteId)
-                    .removeValue()
-                    .addOnSuccessListener {
-                        Log.d("Firebase", "Note silindi")
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.e("Firebase", "Note silme hatası: ${exception.message}")
-                    }
-            } catch (e: Exception) {
-                Log.e("DetailViewModel", "Delete note error: ${e.message}")
-            }
-        }
-    }
-
     fun toggleFavorite(note: Note, isFavorite: Boolean) {
         viewModelScope.launch {
             try {

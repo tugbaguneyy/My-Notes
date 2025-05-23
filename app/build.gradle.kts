@@ -84,4 +84,7 @@ dependencies {
 
     // Kotlinx Serialization
     implementation(libs.kotlinx.serialization)
+
+    //Icons Library
+    implementation("androidx.compose.material:material-icons-extended:$2024.05.00")
 }

@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
@@ -29,10 +30,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.mynotes.R
 import com.example.mynotes.navigation.NavigationGraph
 import com.example.mynotes.navigation.Screen
 import com.example.mynotes.presentation.trash.TrashViewModel
@@ -67,12 +70,12 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         if (!isAuthScreen) {
                             val title = when {
-                                isCurrentScreen(Screen.Home::class) -> "My Notes 📝"
-                                isCurrentScreen(Screen.Settings::class) -> "Settings"
-                                isCurrentScreen(Screen.Add::class) -> "Add Note"
-                                isCurrentScreen(Screen.Detail::class) -> "Note Detail"
-                                isCurrentScreen(Screen.Trash::class) -> "Trash"
-                                else -> "Not Found"
+                                isCurrentScreen(Screen.Home::class) -> stringResource(R.string.home_title)
+                                isCurrentScreen(Screen.Settings::class) -> stringResource(R.string.settings_title)
+                                isCurrentScreen(Screen.Add::class) -> stringResource(R.string.add_note_title)
+                                isCurrentScreen(Screen.Detail::class) -> stringResource(R.string.detail_title)
+                                isCurrentScreen(Screen.Trash::class) -> stringResource(R.string.trash_title)
+                                else -> stringResource(R.string.not_found_title)
                             }
 
                             CenterAlignedTopAppBar(
@@ -110,7 +113,7 @@ class MainActivity : ComponentActivity() {
                                                 onClick = { showClearAllDialog = true }
                                             ) {
                                                 Icon(
-                                                    imageVector = Icons.Default.Clear,
+                                                    imageVector = Icons.Default.DeleteSweep,
                                                     contentDescription = "Clear All"
                                                 )
                                             }

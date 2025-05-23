@@ -52,10 +52,10 @@ fun NoteCard(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(12.dp)
+                .padding(6.dp)
         ) {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().padding(12.dp).padding(top = 12.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Spacer(modifier = Modifier.height(1.dp))

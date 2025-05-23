@@ -1,5 +1,6 @@
 package com.example.mynotes.presentation.trash
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import com.example.mynotes.presentation.trash.components.EmptyTrashContent
 import com.example.mynotes.presentation.trash.components.TrashNoteItem
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrashScreen() {
@@ -30,7 +32,7 @@ fun TrashScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp)
+                .padding(8.dp)
         ) {
             when {
                 isLoading -> {

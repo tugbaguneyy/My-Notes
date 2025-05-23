@@ -73,7 +73,7 @@ fun TrashNoteItem(
                     modifier = Modifier.size(40.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Refresh,
+                        imageVector = Icons.Default.Restore,
                         contentDescription = "Restore",
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -85,7 +85,7 @@ fun TrashNoteItem(
                     modifier = Modifier.size(40.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Delete,
+                        imageVector = Icons.Default.DeleteForever,
                         contentDescription = "Delete Permanently",
                         tint = MaterialTheme.colorScheme.error
                     )
