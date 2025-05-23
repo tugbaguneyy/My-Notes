@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mynotes.domain.model.Note
 import com.example.mynotes.domain.usecase.CurrentUserUseCase
+import com.example.mynotes.domain.usecase.ToggleFavoriteUseCase
 import com.example.mynotes.util.Constants.REFS_NOTES
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     private val db: FirebaseDatabase,
-    private val currentUserUseCase: CurrentUserUseCase
+    private val currentUserUseCase: CurrentUserUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase
 ) : ViewModel() {
 
     private val _note = MutableStateFlow<Note?>(null)
@@ -79,24 +81,9 @@ class DetailViewModel @Inject constructor(
 
     fun toggleFavorite(note: Note, isFavorite: Boolean) {
         viewModelScope.launch {
-            try {
-                val userId = currentUserUseCase().first()?.uid ?: return@launch
-
-                note.id?.let { noteId ->
-                    val noteRef = db.getReference(REFS_NOTES).child(noteId)
-
-                    noteRef.child("favorite").setValue(isFavorite)
-                        .addOnSuccessListener {
-                            Log.d("Firebase", "Favorite durumu güncellendi: $isFavorite")
-                            // Local state'i de güncelle
-                            _note.value = _note.value?.copy(isFavorite = isFavorite)
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.e("Firebase", "Favorite güncelleme hatası: ${exception.message}")
-                        }
-                }
-            } catch (e: Exception) {
-                Log.e("DetailViewModel", "Toggle favorite error: ${e.message}")
+            val result = toggleFavoriteUseCase(note, isFavorite)
+            result.onFailure {
+                Log.e("HomeViewModel", "Toggle favorite failed: ${it.message}")
             }
         }
     }
