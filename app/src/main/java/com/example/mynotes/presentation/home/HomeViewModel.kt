@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mynotes.domain.model.Note
 import com.example.mynotes.domain.usecase.CurrentUserUseCase
+import com.example.mynotes.domain.usecase.GetAllNotesUseCase
 import com.example.mynotes.domain.usecase.SignOutUseCase
 import com.example.mynotes.util.Constants.REFS_NOTES
 import com.google.firebase.database.DataSnapshot
@@ -22,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val db: FirebaseDatabase,
-    private val currentUserUseCase: CurrentUserUseCase
+    private val currentUserUseCase: CurrentUserUseCase,
+    private val getAllNotesUseCase: GetAllNotesUseCase,
 ) : ViewModel() {
 
     private val _isAuthenticated = MutableStateFlow(false)
@@ -35,38 +37,15 @@ class HomeViewModel @Inject constructor(
 
     init {
         isUserAuthenticated()
-        getAllNotes()
+        observeNotes()
     }
 
-    private fun getAllNotes() {
+    private fun observeNotes() {
         viewModelScope.launch {
-            val userId = currentUserUseCase().first()?.uid ?: return@launch
-
-            db.getReference(REFS_NOTES).addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val notes = mutableListOf<Note>()
-
-                    for (data in snapshot.children) {
-                        val note = data.getValue(Note::class.java)
-
-                        // userId kontrolü ve isDeleted false kontrolü
-                        if (note != null &&
-                            note.userId == userId &&
-                            !note.isDeleted
-                        ) {
-                            // Firebase'den gelen note'a id'yi manuel set et
-                            val noteWithId = note.copy(id = data.key)
-                            notes.add(noteWithId)
-                        }
-                    }
-                    _notes.value = notes
-                    Log.d("HomeViewModel", "Notes updated: ${notes.size} active notes found")
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("Firebase", "Veri çekme iptal edildi: ${error.message}")
-                }
-            })
+            getAllNotesUseCase().collect { result ->
+                result.onSuccess { _notes.value = it }
+                result.onFailure { Log.e("HomeViewModel", "Notes error: ${it.message}") }
+            }
         }
     }
 

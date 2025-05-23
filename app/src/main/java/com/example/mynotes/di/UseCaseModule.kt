@@ -3,6 +3,7 @@ package com.example.mynotes.di
 import com.example.mynotes.data.remote.repository.FirebaseAuthImpl
 import com.example.mynotes.domain.usecase.AddNoteUseCase
 import com.example.mynotes.domain.usecase.CurrentUserUseCase
+import com.example.mynotes.domain.usecase.GetAllNotesUseCase
 import com.example.mynotes.domain.usecase.SignInWithEmailAndPasswordUseCase
 import com.example.mynotes.domain.usecase.SignOutUseCase
 import com.example.mynotes.domain.usecase.SignUpWithEmailAndPasswordUseCase
@@ -45,6 +46,12 @@ object UseCaseModule {
     @Provides
     fun provideAddNoteUseCase(db: FirebaseDatabase, currentUserUseCase: CurrentUserUseCase) : AddNoteUseCase {
         return AddNoteUseCase(db, currentUserUseCase)
+    }
+
+    @Singleton
+    @Provides
+    fun provideGetAllNotesUseCase(db: FirebaseDatabase, currentUserUseCase: CurrentUserUseCase) : GetAllNotesUseCase {
+        return GetAllNotesUseCase(db, currentUserUseCase)
     }
 
 
