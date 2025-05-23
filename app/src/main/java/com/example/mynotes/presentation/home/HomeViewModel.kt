@@ -6,12 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mynotes.domain.model.Note
 import com.example.mynotes.domain.usecase.CurrentUserUseCase
 import com.example.mynotes.domain.usecase.GetAllNotesUseCase
-import com.example.mynotes.domain.usecase.SignOutUseCase
-import com.example.mynotes.util.Constants.REFS_NOTES
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.example.mynotes.domain.usecase.ToggleFavoriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,9 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val db: FirebaseDatabase,
     private val currentUserUseCase: CurrentUserUseCase,
     private val getAllNotesUseCase: GetAllNotesUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase
 ) : ViewModel() {
 
     private val _isAuthenticated = MutableStateFlow(false)
@@ -56,27 +51,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    // Favorite işlemi için yeni fonksiyon
     fun toggleFavorite(note: Note, isFavorite: Boolean) {
         viewModelScope.launch {
-            try {
-                val userId = currentUserUseCase().first()?.uid ?: return@launch
-
-                // Note'un id'si varsa Firebase'de güncelle
-                note.id?.let { noteId ->
-                    val noteRef = db.getReference(REFS_NOTES).child(noteId)
-
-                    // Sadece isFavorite field'ını güncelle
-                    noteRef.child("favorite").setValue(isFavorite)
-                        .addOnSuccessListener {
-                            Log.d("Firebase", "Favorite durumu güncellendi: $isFavorite")
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.e("Firebase", "Favorite güncelleme hatası: ${exception.message}")
-                        }
-                }
-            } catch (e: Exception) {
-                Log.e("HomeViewModel", "Toggle favorite error: ${e.message}")
+            val result = toggleFavoriteUseCase(note, isFavorite)
+            result.onFailure {
+                Log.e("HomeViewModel", "Toggle favorite failed: ${it.message}")
             }
         }
     }

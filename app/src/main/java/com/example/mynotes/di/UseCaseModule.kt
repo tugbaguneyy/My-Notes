@@ -7,6 +7,7 @@ import com.example.mynotes.domain.usecase.GetAllNotesUseCase
 import com.example.mynotes.domain.usecase.SignInWithEmailAndPasswordUseCase
 import com.example.mynotes.domain.usecase.SignOutUseCase
 import com.example.mynotes.domain.usecase.SignUpWithEmailAndPasswordUseCase
+import com.example.mynotes.domain.usecase.ToggleFavoriteUseCase
 import com.google.firebase.database.FirebaseDatabase
 import dagger.Module
 import dagger.Provides
@@ -54,6 +55,11 @@ object UseCaseModule {
         return GetAllNotesUseCase(db, currentUserUseCase)
     }
 
+    @Singleton
+    @Provides
+    fun provideToggleFavoriteUseCase(db: FirebaseDatabase, currentUserUseCase: CurrentUserUseCase) : ToggleFavoriteUseCase {
+        return ToggleFavoriteUseCase(db, currentUserUseCase)
+    }
 
 
 }
