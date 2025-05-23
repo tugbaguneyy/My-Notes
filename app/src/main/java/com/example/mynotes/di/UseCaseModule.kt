@@ -1,10 +1,12 @@
 package com.example.mynotes.di
 
 import com.example.mynotes.data.remote.repository.FirebaseAuthImpl
+import com.example.mynotes.domain.usecase.AddNoteUseCase
 import com.example.mynotes.domain.usecase.CurrentUserUseCase
 import com.example.mynotes.domain.usecase.SignInWithEmailAndPasswordUseCase
 import com.example.mynotes.domain.usecase.SignOutUseCase
 import com.example.mynotes.domain.usecase.SignUpWithEmailAndPasswordUseCase
+import com.google.firebase.database.FirebaseDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,6 +40,13 @@ object UseCaseModule {
     fun provideCurrentUserUseCase(repository: FirebaseAuthImpl) : CurrentUserUseCase {
         return CurrentUserUseCase(repository)
     }
+
+    @Singleton
+    @Provides
+    fun provideAddNoteUseCase(db: FirebaseDatabase, currentUserUseCase: CurrentUserUseCase) : AddNoteUseCase {
+        return AddNoteUseCase(db, currentUserUseCase)
+    }
+
 
 
 }
