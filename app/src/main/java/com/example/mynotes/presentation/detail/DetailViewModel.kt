@@ -4,30 +4,23 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mynotes.domain.model.Note
-import com.example.mynotes.domain.usecase.CurrentUserUseCase
 import com.example.mynotes.domain.usecase.LoadNoteUseCase
 import com.example.mynotes.domain.usecase.SoftDeleteNoteUseCase
 import com.example.mynotes.domain.usecase.ToggleFavoriteUseCase
-import com.example.mynotes.util.Constants.REFS_NOTES
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.example.mynotes.domain.usecase.UpdateNoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    private val db: FirebaseDatabase,
-    private val currentUserUseCase: CurrentUserUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val softDeleteNoteUseCase: SoftDeleteNoteUseCase,
-    private val loadNoteUseCase: LoadNoteUseCase
+    private val loadNoteUseCase: LoadNoteUseCase,
+    private val updateNoteUseCase: UpdateNoteUseCase
 ) : ViewModel() {
 
     private val _note = MutableStateFlow<Note?>(null)
@@ -44,24 +37,10 @@ class DetailViewModel @Inject constructor(
 
     fun updateNote(noteId: String, title: String, description: String) {
         viewModelScope.launch {
-            try {
-                val userId = currentUserUseCase().first()?.uid ?: return@launch
-
-                val updates = mapOf(
-                    "title" to title,
-                    "description" to description,
-                    "updatedAt" to System.currentTimeMillis()
-                )
-
-                db.getReference(REFS_NOTES).child(noteId)
-                    .updateChildren(updates)
-                    .addOnSuccessListener {
-                        Log.d("Firebase", "Note güncellendi")
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.e("Firebase", "Note güncelleme hatası: ${exception.message}")
-                    }
-            } catch (e: Exception) {
+            val result = updateNoteUseCase(noteId, title, description)
+            result.onSuccess {
+                Log.d("DetailViewModel", "Note updated successfully")
+            }.onFailure { e ->
                 Log.e("DetailViewModel", "Update note error: ${e.message}")
             }
         }

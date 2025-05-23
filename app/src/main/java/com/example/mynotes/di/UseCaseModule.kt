@@ -14,6 +14,7 @@ import com.example.mynotes.domain.usecase.SignOutUseCase
 import com.example.mynotes.domain.usecase.SignUpWithEmailAndPasswordUseCase
 import com.example.mynotes.domain.usecase.SoftDeleteNoteUseCase
 import com.example.mynotes.domain.usecase.ToggleFavoriteUseCase
+import com.example.mynotes.domain.usecase.UpdateNoteUseCase
 import com.google.firebase.database.FirebaseDatabase
 import dagger.Module
 import dagger.Provides
@@ -103,5 +104,10 @@ object UseCaseModule {
         return ClearAllTrashUseCase(db)
     }
 
+    @Provides
+    @Singleton
+    fun provideUpdateNoteUseCase(db: FirebaseDatabase, currentUserUseCase: CurrentUserUseCase): UpdateNoteUseCase {
+        return UpdateNoteUseCase(db, currentUserUseCase)
+    }
 
 }
