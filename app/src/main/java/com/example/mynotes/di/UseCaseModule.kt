@@ -2,6 +2,7 @@ package com.example.mynotes.di
 
 import com.example.mynotes.data.remote.repository.FirebaseAuthImpl
 import com.example.mynotes.domain.usecase.AddNoteUseCase
+import com.example.mynotes.domain.usecase.ClearAllTrashUseCase
 import com.example.mynotes.domain.usecase.CurrentUserUseCase
 import com.example.mynotes.domain.usecase.GetAllNotesUseCase
 import com.example.mynotes.domain.usecase.GetDeletedNotesUseCase
@@ -87,6 +88,12 @@ object UseCaseModule {
     @Provides
     fun providePermanentlyDeleteNoteUseCase(db: FirebaseDatabase) : PermanentlyDeleteNoteUseCase {
         return PermanentlyDeleteNoteUseCase(db)
+    }
+
+    @Singleton
+    @Provides
+    fun provideClearAllTrashUseCase(db: FirebaseDatabase) : ClearAllTrashUseCase {
+        return ClearAllTrashUseCase(db)
     }
 
 

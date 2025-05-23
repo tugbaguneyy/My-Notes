@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mynotes.domain.model.Note
+import com.example.mynotes.domain.usecase.ClearAllTrashUseCase
 import com.example.mynotes.domain.usecase.GetDeletedNotesUseCase
 import com.example.mynotes.domain.usecase.PermanentlyDeleteNoteUseCase
 import com.example.mynotes.domain.usecase.RestoreNoteUseCase
-import com.example.mynotes.util.Constants.REFS_NOTES
 import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +21,8 @@ class TrashViewModel @Inject constructor(
     private val db: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val restoreNoteUseCase: RestoreNoteUseCase,
     private val getDeletedNotesUseCase: GetDeletedNotesUseCase,
-    private val permanentlyDeleteNoteUseCase: PermanentlyDeleteNoteUseCase
+    private val permanentlyDeleteNoteUseCase: PermanentlyDeleteNoteUseCase,
+    private val clearAllTrashUseCase: ClearAllTrashUseCase
 ) : ViewModel() {
 
     private val _deletedNotes = MutableStateFlow<List<Note>>(emptyList())
@@ -71,18 +72,13 @@ class TrashViewModel @Inject constructor(
 
     fun clearAllTrash() {
         viewModelScope.launch {
-            try {
-                val deletedNoteIds = _deletedNotes.value.mapNotNull { it.id }
-
-                deletedNoteIds.forEach { id ->
-                    db.getReference(REFS_NOTES).child(id).removeValue()
-                }
-
-                // Local state'i temizle
+            val noteIds = _deletedNotes.value.mapNotNull { it.id }
+            val result = clearAllTrashUseCase(noteIds)
+            result.onSuccess {
                 _deletedNotes.value = emptyList()
-
-            } catch (e: Exception) {
-                Log.e("Firebase", "Çöp kutusu temizleme hatası: ${e.message}")
+                Log.d("TrashViewModel", "Trash cleared.")
+            }.onFailure { e ->
+                Log.e("TrashViewModel", "Trash clear failed: ${e.message}")
             }
         }
     }
