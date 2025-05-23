@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mynotes.domain.model.Note
 import com.example.mynotes.domain.usecase.CurrentUserUseCase
+import com.example.mynotes.domain.usecase.SoftDeleteNoteUseCase
 import com.example.mynotes.domain.usecase.ToggleFavoriteUseCase
 import com.example.mynotes.util.Constants.REFS_NOTES
 import com.google.firebase.database.DataSnapshot
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class DetailViewModel @Inject constructor(
     private val db: FirebaseDatabase,
     private val currentUserUseCase: CurrentUserUseCase,
-    private val toggleFavoriteUseCase: ToggleFavoriteUseCase
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val softDeleteNoteUseCase: SoftDeleteNoteUseCase
 ) : ViewModel() {
 
     private val _note = MutableStateFlow<Note?>(null)
@@ -88,26 +90,11 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    fun softDeleteNote(note: Note, isDeleted: Boolean) {
+    fun softDeleteNote(note: Note) {
         viewModelScope.launch {
-            try {
-                val userId = currentUserUseCase().first()?.uid ?: return@launch
-
-                note.id?.let { noteId ->
-                    val noteRef = db.getReference(REFS_NOTES).child(noteId)
-
-                    noteRef.child("deleted").setValue(isDeleted)
-                        .addOnSuccessListener {
-                            Log.d("Firebase", "isDeleted durumu güncellendi: $isDeleted")
-                            // Local state'i de güncelle
-                            _note.value = _note.value?.copy(isFavorite = isDeleted)
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.e("Firebase", "Soft delete güncelleme hatası: ${exception.message}")
-                        }
-                }
-            } catch (e: Exception) {
-                Log.e("DetailViewModel", "Soft delete error: ${e.message}")
+            val result = softDeleteNoteUseCase(note)
+            result.onFailure {
+                Log.e("HomeViewModel", "Soft delete failed: ${it.message}")
             }
         }
     }

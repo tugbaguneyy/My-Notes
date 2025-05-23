@@ -84,7 +84,7 @@ fun DetailScreen(
             },
             onDeleteClick = {
                 note?.let {
-                    viewModel.softDeleteNote(it, true)
+                    viewModel.softDeleteNote(it)
                 }
                 navController.navigateUp()
             }
