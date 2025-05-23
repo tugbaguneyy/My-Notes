@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mynotes.domain.model.Note
 import com.example.mynotes.domain.usecase.CurrentUserUseCase
+import com.example.mynotes.domain.usecase.RestoreNoteUseCase
 import com.example.mynotes.util.Constants.REFS_NOTES
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class TrashViewModel @Inject constructor(
     private val currentUserUseCase: CurrentUserUseCase,
-    private val db: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private val db: FirebaseDatabase = FirebaseDatabase.getInstance(),
+    private val restoreNoteUseCase: RestoreNoteUseCase
 ) : ViewModel() {
 
     private val _deletedNotes = MutableStateFlow<List<Note>>(emptyList())
@@ -70,24 +72,9 @@ class TrashViewModel @Inject constructor(
 
     fun restoreNote(note: Note) {
         viewModelScope.launch {
-            try {
-                val userId = currentUserUseCase().first()?.uid ?: return@launch
-
-                // Note'un id'si varsa Firebase'de güncelle
-                note.id?.let { noteId ->
-                    val noteRef = db.getReference(REFS_NOTES).child(noteId)
-
-                    // Sadece isFavorite field'ını güncelle
-                    noteRef.child("deleted").setValue(false)
-                        .addOnSuccessListener {
-                            Log.d("Firebase", "isDeleted durumu güncellendi: false")
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.e("Firebase", "isDeleted güncelleme hatası: ${exception.message}")
-                        }
-                }
-            } catch (e: Exception) {
-                Log.e("HomeViewModel", "Toggle isDeleted error: ${e.message}")
+            val result = restoreNoteUseCase(note)
+            result.onFailure {
+                Log.e("HomeViewModel", "Soft delete failed: ${it.message}")
             }
         }
     }

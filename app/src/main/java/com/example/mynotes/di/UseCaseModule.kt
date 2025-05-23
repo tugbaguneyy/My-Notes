@@ -4,6 +4,7 @@ import com.example.mynotes.data.remote.repository.FirebaseAuthImpl
 import com.example.mynotes.domain.usecase.AddNoteUseCase
 import com.example.mynotes.domain.usecase.CurrentUserUseCase
 import com.example.mynotes.domain.usecase.GetAllNotesUseCase
+import com.example.mynotes.domain.usecase.RestoreNoteUseCase
 import com.example.mynotes.domain.usecase.SignInWithEmailAndPasswordUseCase
 import com.example.mynotes.domain.usecase.SignOutUseCase
 import com.example.mynotes.domain.usecase.SignUpWithEmailAndPasswordUseCase
@@ -66,6 +67,12 @@ object UseCaseModule {
     @Provides
     fun provideSoftDeleteUseCase(db: FirebaseDatabase, currentUserUseCase: CurrentUserUseCase) : SoftDeleteNoteUseCase {
         return SoftDeleteNoteUseCase(db, currentUserUseCase)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRestoreNoteUseCase(db: FirebaseDatabase, currentUserUseCase: CurrentUserUseCase) : RestoreNoteUseCase {
+        return RestoreNoteUseCase(db, currentUserUseCase)
     }
 
 
